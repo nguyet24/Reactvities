@@ -1,50 +1,34 @@
 //This ActivitiesDashboard.tsx component is a child component of the App.tsx. 
 //Parent can pass down the property down to the child.
-import React from 'react';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect } from 'react';
 import { Grid } from 'semantic-ui-react';
-import { Activity } from '../../../app/models/activities';
-import ActivityDetails from '../details/ActivityDetails';
-import ActivityForm from '../form/ActivityForm';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
+import { useStore } from '../../../app/stores/store';
 import ActivityList from './ActivitiesList';
 
-interface Props {
-    activities: Activity[]; //This gets Activity[] prop from App.tsx (return sections) -> assigns to  activities -> Pass down to return section
-    selectedActivity: Activity | undefined;
-    selectActivity: (id: string) => void; //Because this is a function we must us ==> void.
-    cancelSelectActivity: () => void;
-    editMode: boolean;
-    openForm: (id: string) =>void;
-    closeForm: () => void;
-    createOrEdit: (activity: Activity) => void;
-    deleteActivity: (id: string) => void;
+//The observer takes the function as its parameters. Remember to import observer from mobx-react-lite
+export default observer (function ActivityDashboard() { //The({}) destructures the activities property from the props object (whichh are the property passed down in App.tsx).
+    const {activityStore} = useStore();
+    const {loadActivities, activityRegistry} = activityStore;
 
-}
-
-export default function ActivityDashboard({activities, selectedActivity, 
-        selectActivity, cancelSelectActivity, editMode, openForm, closeForm, createOrEdit, deleteActivity}: Props) { //The({}) destructures the activities property from the props object (whichh are the property passed down in App.tsx).
+    useEffect(() => {
+        //activityStore.loadActivities();
+        if (activityRegistry.size <= 1) loadActivities();
+    }, [activityRegistry.size, loadActivities])
+        
+    //If it is loading then return what is in the Loading Component
+    if (activityStore.loadingInitial) return <LoadingComponent content='Loading app' /> 
+    
     return (
         <Grid>
             <Grid.Column width='10'>
                 {/* Passing the activities, selectedActivity ect. properties in interface to child component ActivitiesList */}
-                <ActivityList activities={activities} 
-                selectActivity={selectActivity}  
-                deleteActivity={deleteActivity}
-                />
+                <ActivityList />
             </Grid.Column>
             <Grid.Column width='6'>
-                {selectedActivity && !editMode && //Only do the below activities if this selectedActivity criteria is met and not in edit mode
-                <ActivityDetails 
-                    activity={selectedActivity} 
-                    cancelSelectActivity={cancelSelectActivity} 
-                    openForm={openForm}
-                />}
-                {editMode && // Only do this when we are in edit mode
-                <ActivityForm 
-                    closeForm={closeForm} 
-                    activity={selectedActivity}
-                    createOrEdit={createOrEdit}
-                />}
+                <h2>Activity filters</h2>
             </Grid.Column>
         </Grid>
     )
-}
+})
