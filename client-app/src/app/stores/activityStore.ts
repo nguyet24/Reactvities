@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agents";
-import { Activity } from "../models/activities";
+import { Activity } from "../models/activity";
 //import { timeStamp } from "console";
 
 
@@ -21,6 +21,20 @@ export default class ActivityStore {
     get activitiesByDate() {
         return Array.from(this.activityRegistry.values()).sort((a, b) => 
             Date.parse(a.date) - Date.parse(b.date));
+    }
+
+    //Assigns a key to each of the above object
+    get groupedActivities() {
+        return Object.entries(
+            this.activitiesByDate.reduce((activities, activity) => {
+                const date = activity.date; //This represents the key for each of our object
+                 //Checks if we have a match for this activity on this date. 
+                 //If yes then spread the activities and specify in the sqaure brackets the objects property accessor again with the date there
+                 //Create a new array with the activities if not match
+                activities[date] = activities[date] ? [...activities[date], activity] : [activity];
+                return activities;
+            }, {} as {[key: string]: Activity[]})
+        )
     }
 
     //This loads the page with all activities listed

@@ -6,6 +6,7 @@ import { Grid } from 'semantic-ui-react';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { useStore } from '../../../app/stores/store';
 import ActivityList from './ActivitiesList';
+import ActivityFilters from './ActivityFilter';
 
 //The observer takes the function as its parameters. Remember to import observer from mobx-react-lite
 export default observer (function ActivityDashboard() { //The({}) destructures the activities property from the props object (whichh are the property passed down in App.tsx).
@@ -27,7 +28,7 @@ export default observer (function ActivityDashboard() { //The({}) destructures t
                 <ActivityList />
             </Grid.Column>
             <Grid.Column width='6'>
-                <h2>Activity filters</h2>
+                <ActivityFilters />
             </Grid.Column>
         </Grid>
     )

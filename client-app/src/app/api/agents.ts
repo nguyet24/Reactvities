@@ -1,6 +1,6 @@
 //This is a centralised API that can be re-used
 import axios, { AxiosResponse } from 'axios';
-import { Activity } from '../models/activities';
+import { Activity } from '../models/activity';
 
 //This adds in delay period
 const sleep = (delay: number) => {
